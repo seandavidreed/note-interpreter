@@ -1,17 +1,16 @@
 import numpy as np
 from scipy.fft import fft
-from copy import copy
 
 
-class SampleProcessor:
-    def __init__(self, sample_rate=None, data=None):
-        if sample_rate is None or data is None:
+class NoteProcessor:
+    def __init__(self, sample_rate=None, audio_data=None):
+        if sample_rate is None or audio_data is None:
             raise TypeError("SampleProcessor constructor arguments cannot be NoneType")
         
         self.sample_rate = sample_rate
-        self.data = data
+        self.audio_data = audio_data
         self.frequency = None
-        self.notes = SampleProcessor.calculate_note_frequencies()
+        self.notes = NoteProcessor.calculate_note_frequencies()
     
     @classmethod
     def calculate_note_frequencies(cls):
@@ -29,14 +28,13 @@ class SampleProcessor:
         return table
 
     def extract_frequency(self):
-        fft_data = fft(self.data)
-        frequencies = np.fft.fftfreq(len(self.data))
+        fft_data = fft(self.audio_data)
+        frequencies = np.fft.fftfreq(len(self.audio_data))
         
         peak_coefficient = np.argmax(np.abs(fft_data))
         peak_freq = frequencies[peak_coefficient]
 
         self.frequency = round(peak_freq * self.sample_rate, 2)
-
 
     def identify_note(self) -> str:
         notes_copy = self.notes
