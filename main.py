@@ -1,5 +1,6 @@
 import sys, os, librosa
 from audio2notes import *
+from guitar import *
 
 def main():
     # Handle incorrect argument count error.
@@ -34,7 +35,13 @@ def main():
     # 12-tone Equal Temperament.
     notes = map_frequencies(frequencies, note_map)
 
-    print([note[0] for note in notes])
+    # Generate a list of potential ways to fret the melody
+    paths = [fretboard[note[0]] for note in notes]
+
+    result = plot_path(paths)
+
+    print(result)
+
 
 if __name__ == "__main__":
     main()
