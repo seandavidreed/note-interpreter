@@ -55,7 +55,7 @@ fretboard = {
     'E6': [(1, 24)],
 }
 
-def get_viable_paths(layers, trend_left=True):
+def get_viable_paths(layers):
     # Indices of paths and path_scores correspond.
     paths = []
     for start in layers[0]:
@@ -64,20 +64,18 @@ def get_viable_paths(layers, trend_left=True):
         path.append(start)
         for layer in layers[1:]:
             highest_score = 0
-            leftmost = 24
             for fret in layer:
                 score = 0
-                leftmost = fret[1] if fret[1] < leftmost else leftmost
                 starting_fret_distance = np.abs(start[1] - fret[1]) # We want this number low.
                 starting_string_distance = np.abs(start[0] - fret[0]) # We want this number high.
                 neighbor_fret_distance = np.abs(path[-1][1] - fret[1]) # We want this number low.
                 neighbor_string_distance = np.abs(path[-1][0] - fret[0]) # We want this number high.
                 score = (
-                    (30 / (starting_fret_distance + 1)) +
-                    (3 / (starting_string_distance + 1)) +
-                    (20 / (neighbor_fret_distance + 1)) +
-                    (3 / (neighbor_string_distance + 1)) +
-                    ((25 / (leftmost + 1)) if trend_left == True else 0)
+                    (40 / (starting_fret_distance + 1)) +   # Increase coefficient to promote short fret distances
+                    (6 / (starting_string_distance + 1)) +  # Increase coefficient to promote short string distances
+                    (20 / (neighbor_fret_distance + 1)) +   # Increase coefficient to promote short fret distances
+                    (3 / (neighbor_string_distance + 1)) +  # Increase coefficient to promote short string distances
+                    (24 / (fret[1] + 1))
                 )
 
                 if score > highest_score:

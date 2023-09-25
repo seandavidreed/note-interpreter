@@ -41,16 +41,15 @@ def main():
     # each note in the melody.
     layers = list(map(lambda x: fretboard[x[0]], notes))
 
-    # Get viable paths.
+    # Get viable paths sorted according to score.
     results = get_viable_paths(layers)
 
     for result in results:
         print(result)
         print()
 
-    # Generate TAB for result.
-    idx = len(results) // 2
-    plot_path(results[idx][0])
+    # Generate TAB for result with highest score.
+    plot_path(results[0][0])
 
 
 if __name__ == "__main__":
