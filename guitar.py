@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+# A map of all frets on a 24-fret guitar
+# organized by dict(list(tuple))
 fretboard = {
     'E2': [(6, 0)],
     'F2': [(6, 1)],
@@ -53,28 +55,43 @@ fretboard = {
     'E6': [(1, 24)],
 }
 
-def define_path(paths, trend_left=True, starting_finger=2):
-    current = paths[0][-1]
-    domain = range(current[1] - 2, current[1] + 3)
-    path = []
-    for layer in paths:
-        lowest_score = 100
-        found = False
-        for fret in layer:
-            if fret[1] in domain:
-                path.append(fret)
-                found = True
-                break
+def get_viable_paths(layers, trend_left=True):
+    # Indices of paths and path_scores correspond.
+    paths = []
+    for start in layers[0]:
+        score_running_total = 0
+        path = []
+        path.append(start)
+        for layer in layers[1:]:
+            highest_score = 0
+            leftmost = 24
+            for fret in layer:
+                score = 0
+                leftmost = fret[1] if fret[1] < leftmost else leftmost
+                starting_fret_distance = np.abs(start[1] - fret[1]) # We want this number low.
+                starting_string_distance = np.abs(start[0] - fret[0]) # We want this number high.
+                neighbor_fret_distance = np.abs(path[-1][1] - fret[1]) # We want this number low.
+                neighbor_string_distance = np.abs(path[-1][0] - fret[0]) # We want this number high.
+                score = (
+                    (30 / (starting_fret_distance + 1)) +
+                    (3 / (starting_string_distance + 1)) +
+                    (20 / (neighbor_fret_distance + 1)) +
+                    (3 / (neighbor_string_distance + 1)) +
+                    ((25 / (leftmost + 1)) if trend_left == True else 0)
+                )
+
+                if score > highest_score:
+                    highest_score = score
+                    best_choice = fret
             
-            # Otherwise we give it a score
-            score = np.abs(current[1] - fret[1])
-            if score < lowest_score:
-                lowest_score = score
-                best_choice = fret
-        
-        if found == False: path.append(best_choice)
+            path.append(best_choice)
+            score_running_total += highest_score
     
-    return path
+        paths.append((path, score_running_total))
+
+    return sorted(paths, key=lambda path: path[1], reverse=True)
+    
+
 
 def plot_path(path):
     # Prepare TAB lines
@@ -95,7 +112,7 @@ def plot_path(path):
             y=((7-elem[0])), 
             s=str(elem[1]), 
             fontsize='xx-large',
-            fontweight='bold',
+            fontweight='semibold',
             fontfamily='monospace',
             ha='center', 
             va='center'

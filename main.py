@@ -37,13 +37,20 @@ def main():
     notes = [note for note in notes]
     print(notes)
     
-    # Generate a list of potential ways to fret the melody
-    paths = list(map(lambda x: fretboard[x[0]], notes))
+    # Generate a list of lists of potential frets for
+    # each note in the melody.
+    layers = list(map(lambda x: fretboard[x[0]], notes))
 
-    # Choose most convenient path adjusted for user-specified parameters.
+    # Get viable paths.
+    results = get_viable_paths(layers)
+
+    for result in results:
+        print(result)
+        print()
+
     # Generate TAB for result.
-    result = define_path(paths)
-    plot_path(result)
+    idx = len(results) // 2
+    plot_path(results[idx][0])
 
 
 if __name__ == "__main__":
