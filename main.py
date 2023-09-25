@@ -28,19 +28,22 @@ def main():
     frequencies = extract_frequencies(clips, sample_rate)
 
     # Initialize 12-TET frequency name tuples.
-    note_map = initialize_TET_notes()
+    note_map = initialize_12TET_notes()
 
     # Use binary search to map each frequency
     # according to a schema, in this case
     # 12-tone Equal Temperament.
     notes = map_frequencies(frequencies, note_map)
-
+    notes = [note for note in notes]
+    print(notes)
+    
     # Generate a list of potential ways to fret the melody
-    paths = [fretboard[note[0]] for note in notes]
+    paths = list(map(lambda x: fretboard[x[0]], notes))
 
-    result = plot_path(paths)
-
-    print(result)
+    # Choose most convenient path adjusted for user-specified parameters.
+    # Generate TAB for result.
+    result = define_path(paths)
+    plot_path(result)
 
 
 if __name__ == "__main__":

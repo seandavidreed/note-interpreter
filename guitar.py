@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 fretboard = {
     'E2': [(6, 0)],
@@ -52,7 +53,7 @@ fretboard = {
     'E6': [(1, 24)],
 }
 
-def plot_path(paths, trend_left=True, starting_finger=2):
+def define_path(paths, trend_left=True, starting_finger=2):
     current = paths[0][-1]
     domain = range(current[1] - 2, current[1] + 3)
     path = []
@@ -74,4 +75,31 @@ def plot_path(paths, trend_left=True, starting_finger=2):
         if found == False: path.append(best_choice)
     
     return path
+
+def plot_path(path):
+    # Prepare TAB lines
+    plt.figure(figsize=[20, 7])
+    plt.margins(y=2)
+    plt.axis('off')
+    plt.plot((0, len(path)), (6, 6), color='gray')
+    plt.plot((0, len(path)), (5, 5), color='gray')
+    plt.plot((0, len(path)), (4, 4), color='gray')
+    plt.plot((0, len(path)), (3, 3), color='gray')
+    plt.plot((0, len(path)), (2, 2), color='gray')
+    plt.plot((0, len(path)), (1, 1), color='gray')
+
+    # Plot notes
+    for i, elem in enumerate(path):
+        plt.text(
+            x=i + 0.5, 
+            y=((7-elem[0])), 
+            s=str(elem[1]), 
+            fontsize='xx-large',
+            fontweight='bold',
+            fontfamily='monospace',
+            ha='center', 
+            va='center'
+        )
+
+    plt.savefig('temp', bbox_inches='tight')
             

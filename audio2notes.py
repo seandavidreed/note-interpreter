@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.fft import fft
 
-def initialize_TET_notes():
+def initialize_12TET_notes():
     notes = [
         'A', 'A#/Bb', 'B', 'C', 'C#/Db', 'D',
         'D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab'
