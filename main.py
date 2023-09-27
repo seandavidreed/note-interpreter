@@ -14,7 +14,7 @@ def main():
         return -1
 
     # Open audio file and store contents.
-    audio_data, sample_rate = librosa.load(sys.argv[1])
+    audio_data, sample_rate = librosa.load(sys.argv[1], sr=44100)
 
     # Split audio file according to silences.
     # Get interval of sample indices for each discretized sound.
